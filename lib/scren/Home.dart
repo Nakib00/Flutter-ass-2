@@ -24,9 +24,7 @@ class Home extends StatelessWidget {
             ),
 
             GestureDetector(
-              onTap: (){
-                Navigator.of(context).push(MaterialPageRoute(builder: (context)  => const teskbar()));
-              },
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => TaskBar(key: UniqueKey()))),
               child: Container(
                 margin: const EdgeInsets.only(top: 10),
                 padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 45),

@@ -1,47 +1,112 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterui/widget/Task%20%20card.dart';
+import 'package:flutterui/widget/Task_card.dart';
 
-class teskbar extends StatelessWidget {
-  const teskbar({super.key});
+class TaskBar extends StatefulWidget {
+  const TaskBar({required Key key}) : super(key: key);
+
+  @override
+  _TaskBarState createState() => _TaskBarState();
+}
+
+class _TaskBarState extends State<TaskBar> {
+  List<Task> tasks = [];
+
+  void _addTask(String title, String description) {
+    setState(() {
+      tasks.add(Task(title: title, description: description));
+    });
+  }
+
+  void _removeTask(Task task) {
+    setState(() {
+      tasks.remove(task);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:Text("Task Manager"),
+        title: const Text("Task Manager"),
         backgroundColor: Colors.black,
-          centerTitle: true,
+        centerTitle: true,
       ),
-      
-      body:Column(
-        children: [
-          TaskCard(
-            key: UniqueKey(), // Provide a Key for the TaskCard widget
-            title: "Task One",
-            description: "Your personal task",
-          ),
-          TaskCard(
-            key: UniqueKey(), // Provide a Key for the TaskCard widget
-            title: "Task Tow",
-            description: "Sunday 6 Aug I have a MGT201 Quiz 2 Chapter-8,10. ",
-          ),
-          TaskCard(
-            key: UniqueKey(), // Provide a Key for the TaskCard widget
-            title: "Task Three",
-            description: "8 Aug have CSE301 quiz DFA Minimization & Context-Free Grammar.",
-          )
-
-
-
-        ],
+      body: ListView.builder(
+        itemCount: tasks.length,
+        itemBuilder: (context, index) {
+          return TaskCard(
+            key: Key(tasks[index].title), // Using task title as key
+            title: tasks[index].title,
+            description: tasks[index].description,
+            onDelete: () {
+              _removeTask(tasks[index]);
+            },
+          );
+        },
       ),
-
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.black,
-        onPressed: () {  },
-        child: Icon(Icons.add,color: Colors.white,),
+        onPressed: () {
+          _showAddTaskDialog(context);
+        },
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
       ),
     );
   }
+
+  void _showAddTaskDialog(BuildContext context) {
+    TextEditingController titleController = TextEditingController();
+    TextEditingController descriptionController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Add Task'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: const InputDecoration(labelText: 'Task Title'),
+              ),
+              TextField(
+                controller: descriptionController,
+                decoration:
+                    const InputDecoration(labelText: 'Task Description'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                _addTask(
+                  titleController.text,
+                  descriptionController.text,
+                );
+                Navigator.of(context).pop();
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class Task {
+  final String title;
+  final String description;
+
+  Task({required this.title, required this.description});
 }
