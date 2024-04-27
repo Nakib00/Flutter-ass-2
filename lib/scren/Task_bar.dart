@@ -24,18 +24,50 @@ class _TaskBarState extends State<TaskBar> {
   }
 
   void _showTaskDetails(BuildContext context, Task task) {
+    TextEditingController titleController = TextEditingController(text: task.title);
+    TextEditingController descriptionController = TextEditingController(text: task.description);
+
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(task.title),
-          content: Text(task.description),
-          actions: <Widget>[
+          title: Text("Task Details"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: InputDecoration(labelText: 'Task Title'),
+              ),
+              TextField(
+                controller: descriptionController,
+                decoration: InputDecoration(labelText: 'Task Description'),
+              ),
+            ],
+          ),
+          actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Close'),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  task.title = titleController.text;
+                  task.description = descriptionController.text;
+                });
+                Navigator.of(context).pop();
+              },
+              child: const Text('Save'),
+            ),
+            TextButton(
+              onPressed: () {
+                _removeTask(task);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Delete'),
             ),
           ],
         );
@@ -100,8 +132,7 @@ class _TaskBarState extends State<TaskBar> {
               ),
               TextField(
                 controller: descriptionController,
-                decoration:
-                    const InputDecoration(labelText: 'Task Description'),
+                decoration: const InputDecoration(labelText: 'Task Description'),
               ),
             ],
           ),
@@ -130,8 +161,8 @@ class _TaskBarState extends State<TaskBar> {
 }
 
 class Task {
-  final String title;
-  final String description;
+  late String title;
+  late String description;
 
   Task({required this.title, required this.description});
 }
