@@ -23,6 +23,26 @@ class _TaskBarState extends State<TaskBar> {
     });
   }
 
+  void _showTaskDetails(BuildContext context, Task task) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(task.title),
+          content: Text(task.description),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,13 +54,18 @@ class _TaskBarState extends State<TaskBar> {
       body: ListView.builder(
         itemCount: tasks.length,
         itemBuilder: (context, index) {
-          return TaskCard(
-            key: Key(tasks[index].title), // Using task title as key
-            title: tasks[index].title,
-            description: tasks[index].description,
-            onDelete: () {
-              _removeTask(tasks[index]);
+          return InkWell(
+            onTap: () {
+              _showTaskDetails(context, tasks[index]);
             },
+            child: TaskCard(
+              key: Key(tasks[index].title), // Using task title as key
+              title: tasks[index].title,
+              description: tasks[index].description,
+              onDelete: () {
+                _removeTask(tasks[index]);
+              },
+            ),
           );
         },
       ),
